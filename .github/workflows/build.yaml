@@ -10,22 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set OS environment variable
-        id: set-os
-        run: echo "OS=${{ runner.os }}" >> $GITHUB_ENV
-
-      - name: Set architecture environment variable
-        id: set-arch
-        run: echo "ARCH=${{ runner.arch }}" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Install Terraform
         run: |
-          curl -LO https://github.com/hashicorp/terraform/releases/latest/download/terraform_{{ .OS }}_{{ .ARCH }}
-          sudo chmod +x terraform
-          sudo mv terraform /usr/local/bin/terraform
+         OS=${{ runner.os }}
+         ARCH=${{ runner.arch }}
+         TERRAFORM_URL="https://github.com/hashicorp/terraform/releases/latest/download/terraform_${OS}_${ARCH}"
+         curl -LO $TERRAFORM_URL
+         sudo chmod +x terraform
+         sudo mv terraform /usr/local/bin/terraform
 
       - name: Run Terraform plan
         id: terraform-plan
