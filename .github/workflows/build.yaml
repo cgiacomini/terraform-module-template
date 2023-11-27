@@ -35,7 +35,5 @@ jobs:
           body: Please review the Terraform plan changes in terraform.tfplan
           branch: main
           commit-message: Request Terraform Plan Review
-          title: Request Terraform Plan Review
-          body: Please review the Terraform plan changes in terraform.tfplan
           labels: terraform, review
 
