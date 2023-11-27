@@ -17,10 +17,16 @@ jobs:
         run: |
           curl -sL https://run.digger.dev | bash
 
+      - name: Install Terraform
+        run: |
+          curl -LO https://github.com/hashicorp/terraform/releases/latest/download/terraform_{{ .OS }}_{{ .Arch }}
+          sudo chmod +x terraform
+          sudo mv terraform /usr/local/bin/terraform
+
       - name: Run Terraform plan
         id: terraform-plan
         run: |
-          digger plan
+          terraform plan
 
       - name: Store plan file
         uses: actions/upload-artifact@v3
