@@ -13,89 +13,102 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Terraform
-        run: |
-         OS=${{ runner.os }}
-         ARCH=${{ runner.arch }}
-         TERRAFORM_URL="https://releases.hashicorp.com/terraform/1.6.4/terraform_1.6.4_linux_amd64.zip"
-         curl -LO $TERRAFORM_URL
-         unzip terraform_1.6.4_linux_amd64.zip
-         sudo chmod +x terraform
-         sudo mv terraform /usr/local/bin/terraform
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      #- name: Install Terraform
+      #  run: |
+      #   OS=${{ runner.os }}
+      #   ARCH=${{ runner.arch }}
+      #   TERRAFORM_URL="https://releases.hashicorp.com/terraform/1.6.4/terraform_1.6.4_linux_amd64.zip"
+      #   curl -LO $TERRAFORM_URL
+      #   unzip terraform_1.6.4_linux_amd64.zip
+      #   sudo chmod +x terraform
+      #   sudo mv terraform /usr/local/bin/terraform
 
-      - name: Install GnuPG
-        run: sudo apt-get install -y gnupg
+      #- name: Install GnuPG
+      #  run: sudo apt-get install -y gnupg
 
-      - name: Run Terraform plan
-        id: terraform-plan
-        run: |
-          terraform init
-          terraform plan -out=terraform.tfplan
+    - name: Terraform Init
+      run: terraform init
+    - name: Terraform Plan
+      run: terraform plan -out terraform.tfplan
+    - name: Store plan file
+      uses: actions/upload-artifact@v3
+      with:
+         name: terraform.tfplan
+         path: terraform.tfplan
+
+
+      #- name: Run Terraform plan
+      #  id: terraform-plan
+      #  run: |
+      #    terraform init
+      #    terraform plan -out=terraform.tfplan
 
       #- name: Encrypt Terraform Plan
       #  run: |
       #    # Encrypt the terraform plan file
       #    gpg --passphrase ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -c -o terraform.tfplan.gpg terraform.tfplan
 
-      - name: Store plan file
-        uses: actions/upload-artifact@v3
-        with:
-          name: terraform.tfplan
-          path: terraform.tfplan
-          #name: terraform.tfplan.gpg
-          #path: terraform.tfplan.gpg
+      #- name: Store plan file
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: terraform.tfplan
+      #    path: terraform.tfplan
+      #    #name: terraform.tfplan.gpg
+      #    #path: terraform.tfplan.gpg
 
-  terraform-review:
-    runs-on: ubuntu-latest
-    needs: terraform-plan
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Download plan file
-        uses: actions/download-artifact@v3
-        with:
-          name: terraform.tfplan
-          path: terraform.tfplan
-          #name: terraform.tfplan.gpg
-          #path: terraform.tfplan.gpg
-
-      - name: Install GPG
-        run: sudo apt-get install -y gnupg
-
-      #- name: Decrypt Terraform Plan
-      #  run: |
-      #    # Decrypt the terraform plan file
-      #    gpg --passphrase  ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -d -o terraform.tfplan terraform.tfplan.gpg
-
-      - name: Create pull request review
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body: fs.readFileSync('terraform.tfplan', 'utf-8')
-            })
-
-  terraform-apply:
-    runs-on: ubuntu-latest
-    needs: terraform-review
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Download plan file
-        uses: actions/download-artifact@v3
-        with:
-          name: terraform-plan
-          path: terraform.plan.json
-
-      - name: Apply Terraform plan
-        id: terraform-apply
-        run: |
-          terraform apply terraform.plan.json
-
+  #terraform-review:
+  #  runs-on: ubuntu-latest
+  #  needs: terraform-plan
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      - name: Download plan file
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: terraform.tfplan
+#          path: terraform.tfplan
+#          #name: terraform.tfplan.gpg
+#          #path: terraform.tfplan.gpg
+#
+#      - name: Install GPG
+#        run: sudo apt-get install -y gnupg
+##
+#      #- name: Decrypt Terraform Plan
+#      #  run: |
+#      #    # Decrypt the terraform plan file
+#      #    gpg --passphrase  ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -d -o terraform.tfplan terraform.tfplan.gpg
+#
+#      - name: Create pull request review
+#        uses: actions/github-script@v6
+#        with:
+#          script: |
+#            github.issues.createComment({
+#              owner: context.repo.owner,
+#              repo: context.repo.repo,
+#              issue_number: context.payload.pull_request.number,
+#              body: fs.readFileSync('terraform.tfplan', 'utf-8')
+#            })
+#
+#  terraform-apply:
+#    runs-on: ubuntu-latest
+#    needs: terraform-review
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      - name: Download plan file
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: terraform-plan
+#          path: terraform.plan.json
+#
+#      - name: Apply Terraform plan
+#        id: terraform-apply
+#        run: |
+#          terraform apply terraform.plan.json
+###
