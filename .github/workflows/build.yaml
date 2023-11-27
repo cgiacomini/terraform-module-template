@@ -29,23 +29,19 @@ jobs:
         name: terraform-plan
         path: terraform.tfplan
 
-  request-review:
-    runs-on: ubuntu-latest
-
-    needs: terraform-plan
-
-    steps:
-    - name: Request Pull Request Review
+    - name: Request Review
       uses: actions/github-script@v7
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.pulls.createReviewRequest({
+          const response = await github.pulls.createReviewRequest({
             owner: context.repo.owner,
             repo: context.repo.repo,
             pull_number: context.payload.pull_request.number,
-            reviewers: ["reviewer1", "reviewer2"]
+            reviewers: ["cgiacomini"],
+            files: ["terraform.tfplan"]
           });
+          console.log(response);
 
   terraform-apply:
     runs-on: ubuntu-latest
