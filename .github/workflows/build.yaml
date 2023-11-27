@@ -84,3 +84,4 @@ jobs:
         id: terraform-apply
         run: |
           digger apply --plan terraform.plan.json
+
