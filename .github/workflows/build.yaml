@@ -32,16 +32,18 @@ jobs:
           terraform init
           terraform plan -out=terraform.tfplan
 
-      - name: Encrypt Terraform Plan
-        run: |
-          # Encrypt the terraform plan file
-          gpg --passphrase ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -c -o terraform.tfplan.gpg terraform.tfplan
+      #- name: Encrypt Terraform Plan
+      #  run: |
+      #    # Encrypt the terraform plan file
+      #    gpg --passphrase ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -c -o terraform.tfplan.gpg terraform.tfplan
 
       - name: Store plan file
         uses: actions/upload-artifact@v3
         with:
-          name: terraform.tfplan.gpg
-          path: terraform.tfplan.gpg
+          name: terraform.tfplan
+          path: terraform.tfplan
+          #name: terraform.tfplan.gpg
+          #path: terraform.tfplan.gpg
 
   terraform-review:
     runs-on: ubuntu-latest
@@ -54,16 +56,18 @@ jobs:
       - name: Download plan file
         uses: actions/download-artifact@v3
         with:
-          name: terraform.tfplan.gpg
-          path: terraform.tfplan.gpg
+          name: terraform.tfplan
+          path: terraform.tfplan
+          #name: terraform.tfplan.gpg
+          #path: terraform.tfplan.gpg
 
       - name: Install GPG
         run: sudo apt-get install -y gnupg
 
-      - name: Decrypt Terraform Plan
-        run: |
-          # Decrypt the terraform plan file
-          gpg --passphrase  ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -d -o terraform.tfplan terraform.tfplan.gpg
+      #- name: Decrypt Terraform Plan
+      #  run: |
+      #    # Decrypt the terraform plan file
+      #    gpg --passphrase  ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -d -o terraform.tfplan terraform.tfplan.gpg
 
       - name: Create pull request review
         uses: actions/github-script@v6
