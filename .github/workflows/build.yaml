@@ -23,6 +23,19 @@ jobs:
          sudo chmod +x terraform
          sudo mv terraform /usr/local/bin/terraform
 
+      - name: Install GnuPG
+        run: |
+          curl -LO https://releases.gnupg.org/gnupg/gnupg-2.3.5.tar.gz
+          tar -xf gnupg-2.3.5.tar.gz
+          cd gnupg-2.3.5
+          ./configure --prefix=/usr
+          make
+          sudo make install
+      - name: Set GPG_HOME environment variable
+        run: |
+          echo "##v1" >> $GITHUB_ENV
+          echo GPG_HOME=/usr/local/gnupg >> $GITHUB_ENV
+
       - name: Run Terraform plan
         id: terraform-plan
         run: |
