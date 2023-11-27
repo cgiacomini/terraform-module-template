@@ -35,7 +35,7 @@ jobs:
       - name: Encrypt Terraform Plan
         run: |
           # Encrypt the terraform plan file
-          gpg --symmetric --cipher-algo AES256 -o terraform.tfplan.gpg terraform.tfplan --passphrase ${{ secrets.GPG_PASSPHRASE }}
+          gpg --passphrase ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -c -o terraform.tfplan terraform.tfplan.gpg
 
       - name: Store plan file
         uses: actions/upload-artifact@v3
@@ -63,7 +63,7 @@ jobs:
       - name: Decrypt Terraform Plan
         run: |
           # Decrypt the terraform plan file
-          gpg -d --cipher-algo AES256 -o terraform.tfplan terraform.tfplan.gpg --passphrase ${{ secrets.GPG_PASSPHRASE }}
+          gpg --passphrase  ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -d -o terraform.tfplan terraform.tfplan.gpg
 
       - name: Create pull request review
         uses: actions/github-script@v6
