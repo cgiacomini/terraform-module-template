@@ -26,11 +26,6 @@ jobs:
       - name: Install GnuPG
         run: sudo apt-get install -y gnupg
 
-      - name: Set GPG_HOME environment variable
-        run: |
-          echo "##v1" >> $GITHUB_ENV
-          echo GPG_HOME=/usr/local/gnupg >> $GITHUB_ENV
-
       - name: Run Terraform plan
         id: terraform-plan
         run: |
