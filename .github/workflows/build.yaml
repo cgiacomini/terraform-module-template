@@ -42,7 +42,7 @@ jobs:
     #        files: ["terraform.tfplan"]
     #      });
     #      console.log(response);
-   - name: Request Pull Request Review
+    - name: Request Pull Request Review
       run: |
         const { Octokit } = require('@octokit/rest');
 
