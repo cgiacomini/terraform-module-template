@@ -35,7 +35,7 @@ jobs:
       - name: Encrypt Terraform Plan
         run: |
           # Encrypt the terraform plan file
-          gpg --passphrase ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -c -o terraform.tfplan gpg terraform.tfplan
+          gpg --passphrase ${{ secrets.GPG_PASSPHRASE }} --batch --quiet --yes -c -o terraform.tfplan.gpg terraform.tfplan
 
       - name: Store plan file
         uses: actions/upload-artifact@v3
