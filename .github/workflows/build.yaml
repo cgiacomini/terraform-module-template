@@ -1,0 +1,39 @@
+name: Terraform Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out terraform.tfplan
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v2
+        with:
+          name: terraform-plan
+          path: terraform.tfplan
+
+      - name: Request Review
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: Request Terraform Plan Review
+          body: Please review the Terraform plan changes in terraform.tfplan
+          branch: main
+          commit-message: Request Terraform Plan Review
+          labels: terraform, review
+
