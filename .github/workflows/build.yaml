@@ -17,8 +17,9 @@ jobs:
         run: |
          OS=${{ runner.os }}
          ARCH=${{ runner.arch }}
-         TERRAFORM_URL="https://github.com/hashicorp/terraform/releases/latest/download/terraform_${OS}_${ARCH}"
+         TERRAFORM_URL="https://releases.hashicorp.com/terraform/1.6.4/terraform_1.6.4_linux_amd64.zip"
          curl -LO $TERRAFORM_URL
+         unzip terraform_1.6.4_linux_amd64.zip
          sudo chmod +x terraform
          sudo mv terraform /usr/local/bin/terraform
 
