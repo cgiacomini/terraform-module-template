@@ -62,7 +62,7 @@ jobs:
               body: fs.readFileSync('diff.txt', 'utf-8')
             })
 
-terraform-apply:
+  terraform-apply:
     runs-on: ubuntu-latest
     needs: terraform-review
 
