@@ -29,32 +29,16 @@ jobs:
         name: terraform-plan
         path: terraform.tfplan
 
-    #- name: Request Review
-    #  uses: actions/github-script@v7
-    #  with:
-    #    github-token: ${{ secrets.GITHUB_TOKEN }}
-    #    script: |
-    #      const response = await github.pulls.createReviewRequest({
-    #        owner: context.repo.owner,
-    #        repo: context.repo.repo,
-    #        pull_number: context.payload.pull_request.number,
-    #        reviewers: ["cgiacomini"],
-    #        files: ["terraform.tfplan"]
-    #      });
-    #      console.log(response);
-    - name: Request Pull Request Review
-      run: |
-        const { Octokit } = require('@octokit/rest');
-
-        const octokit = new Octokit({
-          auth: process.env.GITHUB_TOKEN,
-        });
-
-        octokit.pulls.createReviewRequest({
-          owner: process.env.GITHUB_REPOSITORY_OWNER,
-          repo: process.env.GITHUB_REPOSITORY,
-          pull_number: process.env.GITHUB_PULL_REQUEST_NUMBER,
-          reviewers: ["reviewer1", "reviewer2"],
-          team_reviewers: ["team1"],
-          files: ["terraform.tfplan"]
-        });
+    - name: Request Review
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const response = await github.pulls.createReviewRequest({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number,
+            reviewers: ["cgiacomini"],
+           files: ["terraform.tfplan"]
+          });
+          console.log(response);
