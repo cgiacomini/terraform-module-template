@@ -27,13 +27,18 @@ jobs:
         id: terraform-plan
         run: |
           terraform init
-          terraform plan
+          terraform plan -out=terraform.tfplan
+
+      - name: Encrypt Terraform Plan
+        run: |
+          # Encrypt the terraform plan file
+          gpg --symmetric --cipher-algo AES256 -o terraform.tfplan.gpg terraform.tfplan --passphrase ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Store plan file
         uses: actions/upload-artifact@v3
         with:
-          name: terraform-plan
-          path: terraform.plan.json
+          name: terraform.tfplan.gpg
+          path: terraform.tfplan.gpg
 
   terraform-review:
     runs-on: ubuntu-latest
@@ -46,8 +51,16 @@ jobs:
       - name: Download plan file
         uses: actions/download-artifact@v3
         with:
-          name: terraform-plan
-          path: terraform.plan.json
+          name: terraform.tfplan.gpg
+          path: terraform.tfplan.gpg
+
+      - name: Install GPG
+        run: sudo apt-get install -y gnupg
+
+      - name: Decrypt Terraform Plan
+        run: |
+          # Decrypt the terraform plan file
+          gpg -d --cipher-algo AES256 -o terraform.tfplan terraform.tfplan.gpg --passphrase ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Create pull request review
         uses: actions/github-script@v6
@@ -57,7 +70,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: fs.readFileSync('diff.txt', 'utf-8')
+              body: fs.readFileSync('terraform.tfplan', 'utf-8')
             })
 
   terraform-apply:
