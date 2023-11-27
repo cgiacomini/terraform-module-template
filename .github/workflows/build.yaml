@@ -23,9 +23,6 @@ jobs:
     - name: Terraform Plan
       run: terraform plan -out terraform.tfplan
 
-    - name: Save Terraform Plan
-      run: mv terraform.tfplan $GITHUB_WORKSPACE/terraform.tfplan
-
     - name: Upload Terraform Plan
       uses: actions/upload-artifact@v2
       with:
