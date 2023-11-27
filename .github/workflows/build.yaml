@@ -26,6 +26,7 @@ jobs:
       - name: Run Terraform plan
         id: terraform-plan
         run: |
+          cd ../..
           terraform plan
 
       - name: Store plan file
