@@ -27,7 +27,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: terraform-plan
-        path: $GITHUB_WORKSPACE/terraform.tfplan
+        path: terraform.tfplan
 
   request-review:
     runs-on: ubuntu-latest
