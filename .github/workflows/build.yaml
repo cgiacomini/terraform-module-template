@@ -21,10 +21,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Digger
-        run: |
-          curl -sL https://run.digger.dev | bash
-
       - name: Install Terraform
         run: |
           curl -LO https://github.com/hashicorp/terraform/releases/latest/download/terraform_{{ .OS }}_{{ .ARCH }}
@@ -56,15 +52,6 @@ jobs:
           name: terraform-plan
           path: terraform.plan.json
 
-      - name: Install Digger
-        run: |
-          curl -sL https://run.digger.dev | bash
-
-      - name: Generate review comment
-        id: generate-review-comment
-        run: |
-          digger diff --plan terraform.plan.json > diff.txt
-
       - name: Create pull request review
         uses: actions/github-script@v6
         with:
@@ -89,10 +76,6 @@ jobs:
         with:
           name: terraform-plan
           path: terraform.plan.json
-
-      - name: Install Digger
-        run: |
-          curl -sL https://run.digger.dev | bash
 
       - name: Apply Terraform plan
         id: terraform-apply
