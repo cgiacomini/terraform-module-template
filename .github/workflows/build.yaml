@@ -12,11 +12,11 @@ jobs:
     steps:
       - name: Set OS environment variable
         id: set-os
-        run: echo "##v1" >> $GITHUB_ENV && echo OS=${{ runner.os }} >> $GITHUB_ENV
+        run: echo "OS=${{ runner.os }}" >> $GITHUB_ENV
 
       - name: Set architecture environment variable
         id: set-arch
-        run: echo "##v1" >> $GITHUB_ENV && echo ARCH=${{ runner.arch }} >> $GITHUB_ENV
+        run: echo "ARCH=${{ runner.arch }}" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -97,5 +97,5 @@ jobs:
       - name: Apply Terraform plan
         id: terraform-apply
         run: |
-          digger apply --plan terraform.plan.json
+          terraform apply terraform.plan.json
 
